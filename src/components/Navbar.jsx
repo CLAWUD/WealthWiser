@@ -54,9 +54,9 @@ const Navbar = () => {
         position="sticky"
         sx={{ 
             backgroundColor: '#cff8c9', 
-            border:"3px solid black",
+            // border:"3px solid black",
             height:"90px",
-            borderRadius:"30px",
+            // borderRadius:"30px",
          
         }}
         elevation={0}

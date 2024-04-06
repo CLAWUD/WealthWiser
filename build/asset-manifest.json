@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.21161fb1.css",
+    "main.js": "/static/js/main.eb890318.js",
+    "static/media/pexels-alex-staudinger-1732414.jpg": "/static/media/pexels-alex-staudinger-1732414.b653d3234bbb06c26a1f.jpg",
+    "static/media/pexels-binyamin-mellish-186078.png": "/static/media/pexels-binyamin-mellish-186078.75b5d52bc068ebba8786.png",
+    "static/media/bitcoin.jpg": "/static/media/bitcoin.dfac4fe8531254a94372.jpg",
+    "index.html": "/index.html",
+    "main.21161fb1.css.map": "/static/css/main.21161fb1.css.map",
+    "main.eb890318.js.map": "/static/js/main.eb890318.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.21161fb1.css",
+    "static/js/main.eb890318.js"
+  ]
+}
