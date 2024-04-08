@@ -9,7 +9,7 @@ import Contact from './pages/Contact';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer/Footer';
 import New from './components/New'
-
+import Response from './components/Response';
 function App() {
   return (
     <>
@@ -20,6 +20,7 @@ function App() {
           <Route path='/about' element={<About  />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/new' element={<New/>}  />
+          <Route path='/response' element={<Response/>}/>
         </Routes>
       </BrowserRouter>
       <Footer />

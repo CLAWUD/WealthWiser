@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
-import './styles.css'
+import './styles.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 const New = () => {
   const [step, setStep] = useState(1);
+  const [responses, setResponses] = useState({});
+  const [chatbotResponse, setChatbotResponse] = useState('');
+  const navigate = useNavigate();
 
   const nextStep = () => {
     setStep(step + 1);
@@ -11,12 +17,60 @@ const New = () => {
     setStep(step - 1);
   };
 
+  const sendToOpenAI = async () => {
+    try {
+      const prompt = `
+        Personal Details:
+        Name: ${responses['question_1_1']}
+        Age: ${responses['question_1_2']}
+        Gender: ${responses['question_1_3']}
+
+        Financial Details:
+        Salary: ${responses['question_2_1']}
+        Expenses: ${responses['question_2_2']}
+        Savings: ${responses['question_2_3']}
+
+        Risk Tolerance:
+        Risk Tolerance Level: ${responses['question_3_1']}
+        Previous Investments: ${responses['question_3_2']}
+
+        Investment Preference:
+        Investment Goals: ${responses['question_4_1']}
+        Investment Time Horizon: ${responses['question_4_2']}
+        Known Investment Plans: ${responses['question_4_3']}
+        Segregate my salary into percentage out of 100 for stocks,emergency fund,crypto,mutualfund,ppf,fd. just give me the percentage and give me only in numerical form
+      `;
+      const requestBody = {
+        model: 'gpt-3.5-turbo',
+        messages: Object.values(responses).map((response) => ({ role: 'user', content: prompt })),
+      };
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer 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',
+      };
+      const airesponse = await axios.post('https://api.openai.com/v1/chat/completions', requestBody, { headers });
+
+      setChatbotResponse(airesponse.data.choices[0].message.content);
+      navigate('/response', { state: { response: airesponse.data.choices[0].message.content } });
+    } catch (error) {
+      console.error('Error communicating with OpenAI API:', error.response?.data || error.message);
+      // Handle error
+    }
+  };
+
+  const handleChange = (event, question) => {
+    setResponses({ ...responses, [question]: event.target.value });
+  };
+
   return (
     <div className="wrapper">
       <div className="header">
         <ul>
           {[1, 2, 3, 4, 5].map((num) => (
-            <li key={num} className={step === num ? 'active form_' + num + '_progessbar' : 'form_' + num + '_progessbar'}>
+            <li
+              key={num}
+              className={step === num ? 'active form_' + num + 'progessbar' : 'form' + num + '_progessbar'}
+            >
               <div>
                 <p>{num}</p>
               </div>
@@ -27,114 +81,77 @@ const New = () => {
       <div className="form_wrap">
         {[1, 2, 3, 4, 5].map((num) => (
           <div key={num} className={`form_${num} data_info`} style={{ display: step === num ? 'block' : 'none' }}>
-            {num === 1 && (
-              <div>
-                <h2>Personal Details</h2>
-                <form>
-                  <div className="form_container">
-                    <div className="input_wrap">
-                      <label htmlFor="name">Name</label>
-                      <input type="text" name="name" className="input" id="name" />
-                    </div>
-                    <div className="input_wrap">
-                      <label htmlFor="age">Age</label>
-                      <input type="text" name="age" className="input" id="age" />
-                    </div>
-                    <div className="input_wrap">
-                      <label htmlFor="gender">Gender</label>
-                      <select name="gender" id="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
+            <h2>{num === 1 ? 'Personal Details' : num === 2 ? 'Financial Details' : num === 3 ? 'Risk Tolerance' : num === 4 ? 'Investment Preference' : 'Review Info'}</h2>
+            {num < 5 && (
+              <form>
+                <div className="form_container">
+                  <div className="input_wrap">
+                    <label htmlFor={`question_${num}_1`}>
+                      {num === 1
+                        ? 'Name'
+                        : num === 2
+                        ? 'What is your approximate salary (monthly)?'
+                        : num === 3
+                        ? 'What is your Risk Tolerance in terms of finance?'
+                        : 'Do you have any specific investment goals (e.g., retirement, education)?'}
+                    </label>
+                    <input
+                      type="text"
+                      name={`question_${num}_1`}
+                      className="input"
+                      id={`question_${num}_1`}
+                      value={responses[`question_${num}_1`] || ''}
+                      onChange={(e) => handleChange(e, `question_${num}_1`)}
+                    />
                   </div>
-                </form>
-              </div>
-            )}
-            {num === 2 && (
-              <div>
-                <h2>Financial Details</h2>
-                <form>
-                  <div className="form_container">
-                    <div className="input_wrap">
-                      <label htmlFor="salary">What is your approximate salary (monthly)?</label>
-                      <input type="text" name="salary" className="input" id="salary" />
-                    </div>
-                    <div className="input_wrap">
-                      <label htmlFor="expenses">What are your estimated monthly expenses (Needs, Wants, Rents, Loans)?</label>
-                      <input type="text" name="expenses" className="input" id="expenses" />
-                    </div>
-                    <div className="input_wrap">
-                      <label htmlFor="savings">What are your current monthly savings?</label>
-                      <input type="text" name="savings" className="input" id="savings" />
-                    </div>
+                  <div className="input_wrap">
+                    <label htmlFor={`question_${num}_2`}>
+                      {num === 1
+                        ? 'Age'
+                        : num === 2
+                        ? 'What are your estimated monthly expenses (Needs, Wants, Rents, Loans)?'
+                        : num === 3
+                        ? 'Have you invested in any stocks, bonds, or mutual funds previously?'
+                        : 'What is your investment time horizon?'}
+                    </label>
+                    <input
+                      type="text"
+                      name={`question_${num}_2`}
+                      className="input"
+                      id={`question_${num}_2`}
+                      value={responses[`question_${num}_2`] || ''}
+                      onChange={(e) => handleChange(e, `question_${num}_2`)}
+                    />
                   </div>
-                </form>
-              </div>
-            )}
-            {num === 3 && (
-              <div>
-                <h2>Risk Tolerance</h2>
-                <form>
-                  <div className="form_container">
+                  {num === 4 && (
                     <div className="input_wrap">
-                      <label htmlFor="risk">What is your Risk Tolerance in terms of finance?</label>
-                      <select name="risk" id="risk">
-                        <option value="lowRisk">Low Risk</option>
-                        <option value="moderateRisk">Moderate Risk</option>
-                        <option value="highRisk">High Risk</option>
-                      </select>
+                      <label htmlFor={`question_${num}_3`}>What type of investment plans do you know already?</label>
+                      <input
+                        type="text"
+                        name={`question_${num}_3`}
+                        className="input"
+                        id={`question_${num}_3`}
+                        value={responses[`question_${num}_3`] || ''}
+                        onChange={(e) => handleChange(e, `question_${num}_3`)}
+                      />
                     </div>
-                    <div className="input_wrap">
-                      <label htmlFor="previous">Have you invested in any stocks, bonds, or mutual funds previously?</label>
-                      <input type="text" name="previous" className="input" id="previous" />
-                    </div>
-                  </div>
-                </form>
-              </div>
-            )}
-            {num === 4 && (
-              <div>
-                <h2>Investment Preference</h2>
-                <form>
-                  <div className="form_container">
-                    <div className="input_wrap">
-                      <label htmlFor="preference">Do you have any specific investment goals (e.g., retirement, education)?</label>
-                      <input type="text" name="preference" className="input" id="preference" />
-                    </div>
-                    <div className="input_wrap">
-                      <label htmlFor="time">What is your investment time horizon?</label>
-                      <select name="time" id="time">
-                        <option value="shortTerm">Less than 5 Years</option>
-                        <option value="midTerm">5-10 Years</option>
-                        <option value="longTerm">More than 10 Years</option>
-                      </select>
-                    </div>
-                    <div className="input_wrap">
-                      <label htmlFor="knowledge">What type of investment plans do you know already?</label>
-                      <input type="text" name="knowledge" className="input" id="knowledge" />
-                    </div>
-                  </div>
-                </form>
-              </div>
+                  )}
+                </div>
+              </form>
             )}
             {num === 5 && (
-              <div>
-                <h2>Review Info</h2>
-                <div className="form_container">
-                  <p>Email Address: <span id="review_email"></span></p>
-                  <p>Password: <span id="review_password"></span></p>
-                  <p>User Name: <span id="review_user_name"></span></p>
-                  <p>First Name: <span id="review_first_name"></span></p>
-                  <p>Last Name: <span id="review_last_name"></span></p>
-                  <p>Current Company: <span id="review_company"></span></p>
-                  <p>Total Experience: <span id="review_experience"></span></p>
-                  <p>Designation: <span id="review_designation"></span></p>
-                  <p>Phone Number: <span id="review_phone"></span></p>
-                  <p>Address: <span id="review_address"></span></p>
-                  <p>City: <span id="review_city"></span></p>
-                </div>
+              <div className="form_container">
+                <p>Email Address: {responses['review_email']}</p>
+                <p>Password: {responses['review_password']}</p>
+                <p>User Name: {responses['review_user_name']}</p>
+                <p>First Name: {responses['review_first_name']}</p>
+                <p>Last Name: {responses['review_last_name']}</p>
+                <p>Current Company: {responses['review_company']}</p>
+                <p>Total Experience: {responses['review_experience']}</p>
+                <p>Designation: {responses['review_designation']}</p>
+                <p>Phone Number: {responses['review_phone']}</p>
+                <p>Address: {responses['review_address']}</p>
+                <p>City: {responses['review_city']}</p>
               </div>
             )}
           </div>
@@ -142,7 +159,11 @@ const New = () => {
       </div>
       <div className="btns_wrap">
         {[1, 2, 3, 4, 5].map((num) => (
-          <div key={num} className={`common_btns form_${num}_btns`} style={{ display: step === num ? 'flex' : 'none' }}>
+          <div
+            key={num}
+            className={`common_btns form_${num}_btns`}
+            style={{ display: step === num ? 'flex' : 'none' }}
+          >
             {num > 1 && (
               <button type="button" className="btn_back" onClick={prevStep}>
                 <span className="icon">Back</span>
@@ -154,8 +175,8 @@ const New = () => {
               </button>
             )}
             {num === 5 && (
-              <button type="button" className="btn_done">
-                Done
+              <button type="button" className="btn_done" onClick={sendToOpenAI}>
+                Submit
               </button>
             )}
           </div>
