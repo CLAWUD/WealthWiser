@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, styled, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+
 //img
 
 import headerImg from "../assets/pexels-binyamin-mellish-186078.png";
@@ -92,7 +93,7 @@ const Header = () => {
 
           <Button
             component={Link}
-            to={"/about"}
+            to={"/sip"}
             variant="outlined"
             sx={{
               px: 4,

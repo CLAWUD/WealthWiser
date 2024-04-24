@@ -14,11 +14,14 @@ const Response = () => {
   }, [location.state]);
 
   return (
-    <div style={{ height: '800px', width: '100%', border: '3px solid black', borderRadius:"20px" }}>
-      <p style={{ color: 'blue', fontSize: '30px', fontFamily: 'Arial', fontWeight: '600' }}>
+    <div style={{margin:"50px"}}>
+       <div style={{ height: '800px', width: '100%', margin:"auto"}}>
+      <p style={{ color:"black", fontSize: '30px', fontFamily: 'Arial', fontWeight: '600' }}>
         {chatbotResponse}
       </p>
     </div>
+    </div>
+   
   );
 };
 

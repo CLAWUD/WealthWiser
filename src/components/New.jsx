@@ -38,7 +38,7 @@ const New = () => {
         Investment Goals: ${responses['question_4_1']}
         Investment Time Horizon: ${responses['question_4_2']}
         Known Investment Plans: ${responses['question_4_3']}
-        Segregate my salary into percentage out of 100 for stocks,emergency fund,crypto,mutualfund,ppf,fd. just give me the percentage and give me only in numerical form
+        Segregate my salary into percentage out of 100 for Personal needs,emergency funds,stocks,provident fund,crypto currency,sip,mutual funds,bonds,gold,fixed deposit.Give me just the percentage and calculation of salary pointwise in listed form
       `;
       const requestBody = {
         model: 'gpt-3.5-turbo',
@@ -142,16 +142,6 @@ const New = () => {
             {num === 5 && (
               <div className="form_container">
                 <p>Email Address: {responses['review_email']}</p>
-                <p>Password: {responses['review_password']}</p>
-                <p>User Name: {responses['review_user_name']}</p>
-                <p>First Name: {responses['review_first_name']}</p>
-                <p>Last Name: {responses['review_last_name']}</p>
-                <p>Current Company: {responses['review_company']}</p>
-                <p>Total Experience: {responses['review_experience']}</p>
-                <p>Designation: {responses['review_designation']}</p>
-                <p>Phone Number: {responses['review_phone']}</p>
-                <p>Address: {responses['review_address']}</p>
-                <p>City: {responses['review_city']}</p>
               </div>
             )}
           </div>

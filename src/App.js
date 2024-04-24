@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer/Footer';
 import New from './components/New'
 import Response from './components/Response';
+import Sip from './components/Sip';
 function App() {
   return (
     <>
@@ -21,6 +22,7 @@ function App() {
           <Route path='/contact' element={<Contact />} />
           <Route path='/new' element={<New/>}  />
           <Route path='/response' element={<Response/>}/>
+          <Route path='/sip' element={<Sip/>}/>
         </Routes>
       </BrowserRouter>
       <Footer />
